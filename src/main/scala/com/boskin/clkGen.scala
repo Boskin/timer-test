@@ -11,16 +11,16 @@ class ClkGen(inFreq: Double, outFreq: Double) extends Module {
     val clkOut = Output(Clock())
   })
 
+  val clkReg = RegInit(false.B)
   if (countThresh > 1) {
     val counterInst = Module(new UpDownCounter(0, countThresh - 1))
     counterInst.io.en := true.B
     counterInst.io.dir := UpDownCounter.up
-    io.clkOut := counterInst.io.rollover.asClock
+    clkReg := clkReg ^ counterInst.io.rollover
   } else {
-    val clkReg = RegInit(false.B)
     clkReg := ~clkReg
-    io.clkOut := clkReg.asClock
   }
+  io.clkOut := clkReg.asClock
 }
 
 object GenClkGen extends App {
