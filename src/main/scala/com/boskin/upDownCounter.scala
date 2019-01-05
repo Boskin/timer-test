@@ -13,7 +13,7 @@ class UpDownCounter(min: Int, max: Int) extends Module {
     val rollover = Output(Bool())
   })
 
-  val countReg = RegInit(0.U(width.W))
+  val countReg = RegInit(min.U(width.W))
   val rolloverReg = RegInit(false.B)
   when (io.en) {
     when (io.dir === UpDownCounter.up) {
@@ -42,7 +42,7 @@ class UpDownCounter(min: Int, max: Int) extends Module {
 }
 
 object UpDownCounter {
-  val up :: down = Enum(2)
+  val up :: down :: Nil = Enum(2)
 }
 
 object GenUpDownCounter extends App {
