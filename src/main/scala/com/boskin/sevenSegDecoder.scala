@@ -21,10 +21,10 @@ class SevenSegDecoder(activeLow: Boolean) extends Module {
   decOut := 0.U
   switch (io.din) {
     is (0.U) {
-      decOut := 0.U
+      decOut := "h3f".U
     }
     is (1.U) {
-      decOut := "h02".U
+      decOut := "h06".U
     }
     is (2.U) {
       decOut := "h5b".U
@@ -57,7 +57,7 @@ class SevenSegDecoder(activeLow: Boolean) extends Module {
       decOut := "h7c".U
     }
     is (12.U) {
-      decOut := "h5a".U
+      decOut := "h39".U
     }
     is (13.U) {
       decOut := "h5e".U
