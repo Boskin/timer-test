@@ -3,8 +3,10 @@ package com.boskin
 import chisel3._
 import chisel3.core.{withClock, withClockAndReset}
 
-class Top(clkFreq: Double, counterFreq: Double, counterMin: Int,
-  counterMax: Int) extends Module {
+case class TopConfig(clkFreq: Double, counterFreq: Double, counterMin: Int,
+  counterMax: Int)
+
+class Top(config: TopConfig) extends Module {
 
   val io = IO(new Bundle {
     val userReset = Input(Bool())
@@ -12,7 +14,7 @@ class Top(clkFreq: Double, counterFreq: Double, counterMin: Int,
     val disp = Output(UInt(7.W))
   })
 
-  val clkGenInst = Module(new ClkGen(clkFreq, counterFreq))
+  val clkGenInst = Module(new ClkGen(config.clkFreq, config.counterFreq))
   val counterClk = clkGenInst.io.clkOut
 
   val counterReset = withClock(counterClk) {
@@ -20,7 +22,8 @@ class Top(clkFreq: Double, counterFreq: Double, counterMin: Int,
   }
 
   withClockAndReset(counterClk, counterReset) {
-    val counterInst = Module(new UpDownCounter(counterMin, counterMax))
+    val counterInst = Module(new UpDownCounter(config.counterMin,
+      config.counterMax))
     counterInst.io.en := CDC(io.en)
     counterInst.io.dir := UpDownCounter.up
     
@@ -37,6 +40,12 @@ object GenTop extends App {
   val counterMin: Int = 0
   val counterMax: Int = 15
 
-  chisel3.Driver.execute(args,
-    () => new Top(clkFreq, counterFreq, counterMin, counterMax))
+  val config = TopConfig(
+    clkFreq,
+    counterFreq,
+    counterMin,
+    counterMax
+  )
+
+  chisel3.Driver.execute(args, () => new Top(config))
 }
